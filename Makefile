@@ -1,8 +1,8 @@
 all: install
 
-DESTDIR = /usr
-BINDIR  = $(DESTDIR)/bin
-MANDIR  = $(DESTDIR)/man
+PREFIX ?= /usr
+BINDIR  = $(PREFIX)/bin
+MANDIR  = $(PREFIX)/man
 
 install: src/googl
 	cp src/googl $(BINDIR)
