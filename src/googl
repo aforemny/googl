@@ -1,4 +1,4 @@
-#! /var/run/current-system/sw/bin/zsh
+#! /bin/bash
 
 # BINARIES
 
@@ -22,6 +22,21 @@ URL="$1"
 LONG_URL=""
 MESSAGE=""
 OUTPUT=""
+
+for ARGUMENT in "$@"; do
+  case "$ARGUMENT" in
+    --help|-h)
+      HELP=1
+    ;;
+    *)
+      if [ -z "$URL" ]; then
+        URL="$ARGUMENT"
+      fi
+      "$ECHO_BIN" "URL already given." >&2
+      exit 1
+    ;;
+  esac
+done
 
 if [ -z "$URL" ]; then
   "$ECHO_BIN" "No URL given. See googl --help." >&2
