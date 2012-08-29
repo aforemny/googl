@@ -2,10 +2,10 @@
 
 # BINARIES
 
-CURL_BIN="$(which curl)"
+CURL_BIN=curl
 ECHO_BIN=echo
-GREP_BIN="$(which grep)"
-SED_BIN="$(which sed)"
+GREP_BIN=grep
+SED_BIN=sed
 
 # STATIC VARIABLES
 
@@ -15,7 +15,7 @@ API=https://www.googleapis.com/urlshortener
 
 ACTION=shorten
 HELP=0
-URL="$1"
+URL=""
 
 # INTERNAL VARIABLES
 
