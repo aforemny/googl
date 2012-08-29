@@ -24,14 +24,14 @@ MESSAGE=""
 OUTPUT=""
 
 if [ -z "$URL" ]; then
-  "$ECHO_BIN" "No URL given. See $0 --help." >&2
+  "$ECHO_BIN" "No URL given. See googl --help." >&2
   exit 1
 fi
 
 if [ $HELP -ne 0 ]; then
-  "$ECHO_BIN" "$0"
+  "$ECHO_BIN" "googl"
   "$ECHO_BIN"
-  "$ECHO_BIN" "usage: $0 URL"
+  "$ECHO_BIN" "usage: googl URL"
   exit 0
 fi
 
