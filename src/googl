@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /var/run/current-system/sw/bin/zsh
 
 # BINARIES
 
@@ -39,16 +39,16 @@ for ARGUMENT in "$@"; do
   esac
 done
 
-if [ -z "$URL" ]; then
-  "$ECHO_BIN" "No URL given. See googl --help." >&2
-  exit 1
-fi
-
-if [ $HELP -ne 0 ]; then
+if [ $HELP -eq 1 ]; then
   "$ECHO_BIN" "googl"
   "$ECHO_BIN"
   "$ECHO_BIN" "usage: googl URL"
   exit 0
+fi
+
+if [ -z "$URL" ]; then
+  "$ECHO_BIN" "No URL given. See googl --help." >&2
+  exit 1
 fi
 
 "$ECHO_BIN" "$URL" | "$GREP_BIN" -qE "^http://goo.gl"
@@ -67,7 +67,7 @@ case $ACTION in
     fi
     MESSAGE="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"message\":)"
     if [ $? -eq 0 ]; then
-      MESSAGE="$("$ECHO_BIN" "$MESSAGE" | "$SED_BIN" \$p)"
+      MESSAGE="$("$ECHO_BIN" "$MESSAGE" | "$SED_BIN" -n \$p)"
       MESSAGE="$("$ECHO_BIN" "$MESSAGE" | "$SED_BIN" 's/.*"\([^"]*\)"$/\1/')"
       "$ECHO_BIN" "Invalid response ($MESSAGE)." >&2
       exit 1
