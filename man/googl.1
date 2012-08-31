@@ -3,9 +3,16 @@
 googl \- command line interface to the Google url shortener
 .SH SYNOPSIS
 .B googl
-.IR url ...
-.B googl
-\fB\-\-help|\-h
+.IR URL
 .SH DESCRIPTION
-.SH OPTIONS
+Given a URL
+.B googl
+returns a short URL pointing to the URL given as produced by the Google url
+shortener. In case the URL is already shortened the expanded URL is returned.
 .SH EXAMPLES
+googl
+http://en.wikipedia.org
+
+googl http://goo.gl/Y9So
+.SH BUGS
+Neither authentification nor passing multiple URLs is supported right now.
