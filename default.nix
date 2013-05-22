@@ -7,9 +7,7 @@ stdenv.mkDerivation rec {
 
   src = ./.;
 
-  phases = [ "installPhase" ];
+  phases = [ "unpackPhase" "installPhase" ];
 
-  installPhase = ''
-    make PREFIX=$out install
-  '';
+  installPhase = "make PREFIX=$out install";
 }
