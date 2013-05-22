@@ -1,10 +1,14 @@
-googl
-=====
+# googl
 
 A command line interface for the Google url shortener service.
 
-Installation
-------------
+## Installation
+
+### NixOS
+
+    % nix-env -f . -i googl
+
+### Linux
 
 Be sure to have the following dependencies installed.
 
@@ -19,10 +23,9 @@ binary. Note that echo is usually a shell built-in command.
 
 Install via `make install` or `sudo make install`. There is no `make build`.
 
-    $ make install
+    % make install
 
-Usage
------
+## Usage
 
     googl http://en.wikipedia.org/
 
