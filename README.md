@@ -31,3 +31,5 @@ Install via `make install` or `sudo make install`. There is no `make build`.
 
     googl http://goo.gl/Y9So
 
+The program now copies the short URL into your clipboard so you can now paste it in
+any other application with <b>'Crtl-v'</b>
