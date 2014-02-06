@@ -1,32 +1,32 @@
-#! /var/run/current-system/sw/bin/zsh
+#!/bin/sh
 
 # BINARIES
-
 CURL_BIN=curl
 ECHO_BIN=echo
 GREP_BIN=grep
 SED_BIN=sed
 
 # STATIC VARIABLES
-
 API=https://www.googleapis.com/urlshortener
 
 # ARGUMENT VARIABLES
-
 ACTION=shorten
 HELP=0
 URL=""
 
 # INTERNAL VARIABLES
-
 LONG_URL=""
 MESSAGE=""
 OUTPUT=""
+PIPE=""
 
 for ARGUMENT in "$@"; do
   case "$ARGUMENT" in
     --help|-h)
       HELP=1
+    ;;
+    -c)
+	 PIPE="xclip -selection clipboard"
     ;;
     *)
       if [ -z "$URL" ]; then
@@ -77,9 +77,10 @@ case $ACTION in
   shorten)
     OUTPUT="$("$CURL_BIN" -s "$API/v1/url" -H 'Content-Type: application/json' -d "{\"longUrl\": \"$URL\"}")"
     SHORT_URL="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"id\":)"
-    if [ $? -eq 0 ]; then
+    if [ $? -eq 0 ]
+    then
       SHORT_URL="$("$ECHO_BIN" "$SHORT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/')"
-      "$ECHO_BIN" "$SHORT_URL"
+      "$ECHO_BIN" "$SHORT_URL" | xclip -selection clipboard
       exit 0
     fi
     exit 2
@@ -87,4 +88,3 @@ case $ACTION in
 esac
 
 exit 2
-
