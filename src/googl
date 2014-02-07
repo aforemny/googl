@@ -18,7 +18,7 @@ URL=""
 LONG_URL=""
 MESSAGE=""
 OUTPUT=""
-PIPE=""
+CLIPBOARD=0
 
 for ARGUMENT in "$@"; do
   case "$ARGUMENT" in
@@ -26,7 +26,7 @@ for ARGUMENT in "$@"; do
       HELP=1
     ;;
     -c)
-	 PIPE="xclip -selection clipboard"
+	 CLIPBOARD=1
     ;;
     *)
       if [ -z "$URL" ]; then
@@ -80,7 +80,12 @@ case $ACTION in
     if [ $? -eq 0 ]
     then
       SHORT_URL="$("$ECHO_BIN" "$SHORT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/')"
-      "$ECHO_BIN" "$SHORT_URL" | xclip -selection clipboard
+      "$ECHO_BIN" "$SHORT_URL"
+      if [ $CLIPBOARD = 1 ]
+		then
+	  		"$ECHO_BIN" -n  "$SHORT_URL" | xclip -selection clipboard
+	  		"$ECHO_BIN" "Copied to clipboard!"
+		fi
       exit 0
     fi
     exit 2
