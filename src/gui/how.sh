@@ -1,0 +1,1 @@
+echo -n "This is just a test" >$1
