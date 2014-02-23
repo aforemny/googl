@@ -2,17 +2,44 @@
 .SH NAME
 googl \- command line interface to the Google url shortener
 .SH SYNOPSIS
-.B googl
-.IR URL
+.HP \w'\fBgoogl\fR\ 'u
+\fBgoogl\fR [\fIoptions\fR] \fIURL\fR
 .SH DESCRIPTION
-Given a URL
 .B googl
 returns a short URL pointing to the URL given as produced by the Google url
 shortener. In case the URL is already shortened the expanded URL is returned.
+.SH OPTIONS
+\fB\-v\fR, \fB\-\-version\fR
+.RS 4
+ Display the version number and exit\&.
+.RE
+.PP
+\fB\-c\fR, \fB\-\-copy\fR
+.RS 4
+ Copies the url returned  into the X clipboard.
+.RE
+.RS 5
+.B NB
+xclip must be installed for this functionality to work
+.RE
+.PP
+
+\fB\-f\fR, \fB\-\-file \[filename\]\fR
+.RS 4
+Writes the returned URL to the file specified.
+.RE
+.RS 4
+.B NB
+There should be a space after -f or --file before writing the filename
+.RE
+.PP
+
 .SH EXAMPLES
 googl
 http://en.wikipedia.org
 
 googl http://goo.gl/Y9So
 .SH BUGS
-Neither authentification nor passing multiple URLs is supported right now.
+Neither authentication nor passing multiple URLs is supported right now.
+.RE
+Report any other bugs/feature requests to \fIarnoldewin@gmail.com\fR
