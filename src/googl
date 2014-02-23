@@ -19,14 +19,25 @@ LONG_URL=""
 MESSAGE=""
 OUTPUT=""
 CLIPBOARD=0
+OUTPUT_FILE="&2"
 
 for ARGUMENT in "$@"; do
   case "$ARGUMENT" in
     --help|-h)
       HELP=1
     ;;
-    -c)
+    -c|--copy)
 	 CLIPBOARD=1
+    ;;
+
+   -f|--file)
+	 TMP_STRING="$@"
+       TMP_STRING=${TMP_STRING##*-f }
+	 OUTPUT_FILE=${TMP_STRING%%-*}
+   ;;
+   -v|--version)
+	  echo "goo.gl Version \"1.1.0\""
+	  exit 1
     ;;
     *)
       if [ -z "$URL" ]; then
@@ -80,12 +91,27 @@ case $ACTION in
     if [ $? -eq 0 ]
     then
       SHORT_URL="$("$ECHO_BIN" "$SHORT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/')"
-      "$ECHO_BIN" "$SHORT_URL"
-      if [ $CLIPBOARD = 1 ]
-		then
-	  		"$ECHO_BIN" -n  "$SHORT_URL" | xclip -selection clipboard
-	  		"$ECHO_BIN" "Copied to clipboard!"
-		fi
+       if [ -f "$OUTPUT_FILE" ];then	     	
+	     if !  [ -w "$OUTPUT_FILE" ];then
+		 "$ECHO_BIN" "Cannot write to $OUTPUT_FILE: Permission denied"
+		 exit 1
+	     fi
+	     
+	     "$ECHO_BIN" -n "[$OUTPUT_FILE] exits! Do you want to overwrite(y/n)? "
+	     	     
+	     response=""
+	     read response
+
+	     if ! [ "$response" = "y" ] || [ "$response" = "Y" ];then
+		 OUTPUT_FILE="&2"
+	     fi	
+	 fi
+
+       "$ECHO_BIN" "$SHORT_URL" >"$OUTPUT_FILE"
+      if [ $CLIPBOARD = 1 ];then
+	"$ECHO_BIN" -n  "$SHORT_URL" | xclip -selection clipboard
+	"$ECHO_BIN" "Copied to clipboard!"
+      fi
       exit 0
     fi
     exit 2
