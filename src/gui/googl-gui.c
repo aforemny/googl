@@ -113,27 +113,29 @@ static void shortern_url(GtkButton * button, __entries *entries)
       exit(EXIT_FAILURE);
 
    case 0:
-      execlp("./how.sh", "", filename, NULL);
+      remove(filename);
+      gchar *URL;
+      URL = gtk_entry_get_text(GTK_ENTRY(entries->long_url_entry));
+      execlp("/usr/bin/googl"," ","-f", filename,URL,  NULL);
 
    default:
       // Parent waits untill child is complete
       wait(NULL);
       
       /* Check if file was  was created */
-      if(!g_file_test(filename, G_FILE_TEST_EXISTS))
+      if(g_file_test(filename, G_FILE_TEST_EXISTS))
       {
-	 g_error("Error: File does not exist!\n");
-	 exit(EXIT_FAILURE);
+	 /* Get the contents of the temporary file and report any errors */
+	 read = g_io_channel_new_file(filename, "r", &error);
+	 handle_error(error);
+	 g_io_channel_read_to_end(read, &content, &bytes, NULL);
+	 g_io_channel_shutdown(read, TRUE, &error);
+      } else {
+	 content=malloc(sizeof( strlen("Wrong URL")));
+	 strcpy(content, "Wrong URL");
       }
-      
-      /* Get the contents of the temporary file and report any errors */
-      read = g_io_channel_new_file(filename, "r", &error);
-      handle_error(error);
-      g_io_channel_read_to_end(read, &content, &bytes, NULL);
-
+     
       gtk_entry_set_text(GTK_ENTRY(entries->short_url_entry), content);
-      
-      g_io_channel_shutdown(read, TRUE, &error);
       g_free(content);
       g_free(filename);
    }

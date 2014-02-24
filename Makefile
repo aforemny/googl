@@ -1,4 +1,8 @@
-all: install
+all: googl, googl-gui.o
+	gcc -c googl-gui.c  `pkg-config --libs gtk+-2.0` 
+
+googl-gui.o: googl-gui.c
+	gcc -c googl-gui.c  `pkg-config --cflags gtk+-2.0` 
 
 INSTALL = install
 

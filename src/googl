@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # BINARIES
+PRINTF_BIN=printf
 CURL_BIN=curl
 ECHO_BIN=echo
 GREP_BIN=grep
@@ -15,50 +16,109 @@ HELP=0
 URL=""
 
 # INTERNAL VARIABLES
-LONG_URL=""
 MESSAGE=""
 OUTPUT=""
 CLIPBOARD=0
-OUTPUT_FILE="&2"
+OUTPUT_FILE=""
+OUTPUT_URL=""
 
-for ARGUMENT in "$@"; do
-  case "$ARGUMENT" in
-    --help|-h)
-      HELP=1
-    ;;
-    -c|--copy)
-	 CLIPBOARD=1
-    ;;
+# FUNCTIONS
 
-   -f|--file)
-	 TMP_STRING="$@"
-       TMP_STRING=${TMP_STRING##*-f }
-	 OUTPUT_FILE=${TMP_STRING%%-*}
-   ;;
-   -v|--version)
-	  echo "goo.gl Version \"1.1.0\""
-	  exit 1
-    ;;
-    *)
-      if [ -z "$URL" ]; then
-        URL="$ARGUMENT"
+# This function reurns the output url
+# It either writes the output URL to stdout or it writes it to OUTPUT_FILE
+return_url()
+{
+  if [ -f "$OUTPUT_FILE" ];then
+	     if !  [ -w "$OUTPUT_FILE" ];then
+		 "$ECHO_BIN" "Cannot write to $OUTPUT_FILE: Permission denied"
+		 exit 1
+	     fi
+
+	     "$ECHO_BIN" -n "[$OUTPUT_FILE] exits! Do you want to overwrite(y/n)? "
+
+	     response=""
+	     read response
+
+	     if ! [ "$response" = "y" ] || [ "$response" = "Y" ];then
+		 OUTPUT_FILE=""
+	     fi
+  fi
+  if [ -z "$OUTPUT_FILE" ]; then
+	  "$ECHO_BIN" "$OUTPUT_URL"
       else
-        "$ECHO_BIN" "URL already given." >&2
-        exit 1
-      fi
-    ;;
-  esac
+         "$ECHO_BIN" -n  "$OUTPUT_URL" >"$OUTPUT_FILE"
+  fi
+
+  return 0
+ }
+
+
+# This function pastes the output url to the X clipboard
+# NB Xclip must be installed for this to work
+paste_clipboard()
+{
+    if [ $CLIPBOARD = 1 ];then
+	"$ECHO_BIN" -n  "$OUTPUT_URL" | xclip -selection clipboard
+	"$ECHO_BIN" "Copied to clipboard!"
+    fi
+}
+
+
+
+# Main application starts here
+while :
+do
+    case $1 in
+      -c | --copy)
+           CLIPBOARD=1
+           shift
+            ;;
+      -f | --file)
+            OUTPUT_FILE=$2
+            shift 2
+            ;;
+      --file=*)
+            OUTPUT_FILE=${1#*=}        # Delete everything up till "="
+            shift
+            ;;
+      -v |--version)
+            "$ECHO_BIN" "goo.gl Version \"1.1.0\"" >&1
+            exit 0
+            ;;
+      -h | --help | -\?)
+            HELP=1
+            break;
+            ;;
+        --) # End of all options
+            shift
+            break
+            ;;
+        -*)
+            "$ECHO_BIN" "WARN: Unknown option (ignored): $1" >&2
+           	"$ECHO_BIN"
+            HELP=1
+            break;
+            ;;
+        *)  # no more options. Stop while loop
+	    URL=$1
+            break
+            ;;
+    esac
 done
 
 if [ $HELP -eq 1 ]; then
-  "$ECHO_BIN" "googl"
+  "$ECHO_BIN" "usage: googl [options] URL "
   "$ECHO_BIN"
-  "$ECHO_BIN" "usage: googl URL"
+  "$ECHO_BIN" "Options:"
+  "$PRINTF_BIN" "  -c, --copy\t\tCopies the returned URL into the x-clipboard\n"
+  "$PRINTF_BIN" "  -f, --file FILENAME\tWrites the output to FILENAME\n"
+  "$PRINTF_BIN" "  -h, --help \t\tPrints this help message and exits\n"
+  "$PRINTF_BIN" "  -v, --version\t\tPrints the version number and exits\n\n"
   exit 0
 fi
 
 if [ -z "$URL" ]; then
-  "$ECHO_BIN" "No URL given. See googl --help." >&2
+  "$ECHO_BIN" "No URL given. See googl --help." >&1
   exit 1
 fi
 
@@ -71,47 +131,30 @@ fi
 case $ACTION in
   expand)
     OUTPUT="$("$CURL_BIN" -s "$API/v1/url?shortUrl=$URL")"
-    LONG_URL="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"longUrl\":)"
+    OUTPUT_URL="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"longUrl\":)"
     if [ $? -eq 0 ]; then
-      "$ECHO_BIN" "$LONG_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/'
-      exit 0
+	OUTPUT_URL=`"$ECHO_BIN" "$OUTPUT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/'`
+	return_url
+	paste_clipboard
+	exit 0
     fi
     MESSAGE="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"message\":)"
     if [ $? -eq 0 ]; then
       MESSAGE="$("$ECHO_BIN" "$MESSAGE" | "$SED_BIN" -n \$p)"
       MESSAGE="$("$ECHO_BIN" "$MESSAGE" | "$SED_BIN" 's/.*"\([^"]*\)"$/\1/')"
-      "$ECHO_BIN" "Invalid response ($MESSAGE)." >&2
+      "$ECHO_BIN" "Invalid response ($MESSAGE)." >&1
       exit 1
     fi
     exit 2
   ;;
   shorten)
     OUTPUT="$("$CURL_BIN" -s "$API/v1/url" -H 'Content-Type: application/json' -d "{\"longUrl\": \"$URL\"}")"
-    SHORT_URL="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"id\":)"
+    OUTPUT_URL="$("$ECHO_BIN" "$OUTPUT" | "$GREP_BIN" -E \"id\":)"
     if [ $? -eq 0 ]
     then
-      SHORT_URL="$("$ECHO_BIN" "$SHORT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/')"
-       if [ -f "$OUTPUT_FILE" ];then	     	
-	     if !  [ -w "$OUTPUT_FILE" ];then
-		 "$ECHO_BIN" "Cannot write to $OUTPUT_FILE: Permission denied"
-		 exit 1
-	     fi
-	     
-	     "$ECHO_BIN" -n "[$OUTPUT_FILE] exits! Do you want to overwrite(y/n)? "
-	     	     
-	     response=""
-	     read response
-
-	     if ! [ "$response" = "y" ] || [ "$response" = "Y" ];then
-		 OUTPUT_FILE="&2"
-	     fi	
-	 fi
-
-       "$ECHO_BIN" "$SHORT_URL" >"$OUTPUT_FILE"
-      if [ $CLIPBOARD = 1 ];then
-	"$ECHO_BIN" -n  "$SHORT_URL" | xclip -selection clipboard
-	"$ECHO_BIN" "Copied to clipboard!"
-      fi
+      OUTPUT_URL="$("$ECHO_BIN" "$OUTPUT_URL" | "$SED_BIN" 's/.*"\([^"]*\)",$/\1/')"
+       return_url
+       paste_clipboard
       exit 0
     fi
     exit 2
