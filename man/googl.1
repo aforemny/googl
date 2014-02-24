@@ -9,14 +9,9 @@ googl \- command line interface to the Google url shortener
 returns a short URL pointing to the URL given as produced by the Google url
 shortener. In case the URL is already shortened the expanded URL is returned.
 .SH OPTIONS
-\fB\-v\fR, \fB\-\-version\fR
-.RS 4
- Display the version number and exit\&.
-.RE
-.PP
 \fB\-c\fR, \fB\-\-copy\fR
-.RS 4
- Copies the url returned  into the X clipboard.
+.RS 5
+Copies the url returned  into the X clipboard.
 .RE
 .RS 5
 .B NB
@@ -24,13 +19,23 @@ xclip must be installed for this functionality to work
 .RE
 .PP
 
+\fB\-h\fR, \fB\-\-help\fR
+.RS 5
+Displays the Help and exits
+.RE
+.PP
 \fB\-f\fR, \fB\-\-file \[filename\]\fR
-.RS 4
+.RS 5
 Writes the returned URL to the file specified.
 .RE
-.RS 4
+.RS 5
 .B NB
 There should be a space after -f or --file before writing the filename
+.RE
+.PP
+\fB\-v\fR, \fB\-\-version\fR
+.RS 5
+Display the version number and exit\&.
 .RE
 .PP
 

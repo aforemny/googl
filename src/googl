@@ -114,6 +114,7 @@ if [ $HELP -eq 1 ]; then
   "$PRINTF_BIN" "  -f, --file FILENAME\tWrites the output to FILENAME\n"
   "$PRINTF_BIN" "  -h, --help \t\tPrints this help message and exits\n"
   "$PRINTF_BIN" "  -v, --version\t\tPrints the version number and exits\n\n"
+  "$PRINTF_BIN" "  Report bugs or request for new features to arnoldewin@gmail.com\n"
   exit 0
 fi
 

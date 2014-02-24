@@ -114,8 +114,7 @@ static void shortern_url(GtkButton * button, __entries *entries)
 
    case 0:
       remove(filename);
-      gchar *URL;
-      URL = gtk_entry_get_text(GTK_ENTRY(entries->long_url_entry));
+      const gchar *URL = gtk_entry_get_text(GTK_ENTRY(entries->long_url_entry));
       execlp("/usr/bin/googl"," ","-f", filename,URL,  NULL);
 
    default:
@@ -159,5 +158,4 @@ static void copy_url(GtkButton *button, __entries *entries)
    clipboard_text = gtk_entry_get_text(GTK_ENTRY(entries->short_url_entry));
 
    gtk_clipboard_set_text (my_clipboard,clipboard_text, -1);
-   g_print("Copy URL Clicked\n");
 }
