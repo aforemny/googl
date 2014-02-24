@@ -32,8 +32,11 @@ binary. Note that echo is usually a shell built-in command.
 ##Install via
 
 	$  make
-   % make install
+   
+    make install
+	
 	or
+	
 	$ sudo make install
 
 
