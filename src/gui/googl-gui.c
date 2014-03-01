@@ -115,7 +115,7 @@ static void shortern_url(GtkButton * button, __entries *entries)
    case 0:
       remove(filename);
       const gchar *URL = gtk_entry_get_text(GTK_ENTRY(entries->long_url_entry));
-      execlp("/usr/bin/googl"," ","-f", filename,URL,  NULL);
+      execlp("/usr/bin/googl","googl","-f", filename,URL,  NULL);
 
    default:
       // Parent waits untill child is complete
