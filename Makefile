@@ -4,9 +4,9 @@ all:
 
 INSTALL = install
 
-PREFIX ?= /usr
-BINDIR  = $(PREFIX)/bin
-MANDIR  = $(PREFIX)/man
+DESTDIR ?= /usr
+BINDIR  = $(DESTDIR)/bin
+MANDIR  = $(DESTDIR)/man
 
 install: src/googl
 	cd ../
