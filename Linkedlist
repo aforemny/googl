@@ -1,0 +1,191 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct node{
+
+     int data;
+
+     node *next;
+
+};
+
+
+
+
+
+void insert(node **temp,int item){
+
+  node *temp1=new node;
+
+  temp1->data=item;
+
+  temp1->next =NULL;
+
+  temp1->next=*temp;
+
+  *temp=temp1;  
+
+
+
+}
+
+
+
+
+
+void show(node* temp){
+
+  while(temp->next!=NULL){
+
+     cout<<temp->data<<" ";
+
+     temp=temp->next;
+
+  }
+
+  cout<<temp->data;
+
+}
+
+
+
+
+
+node* update(node** s,int n){
+
+
+
+  int i=3;
+
+  node* temp=*s;
+
+  node* temp1=temp->next;
+
+  
+
+  node* newstart=new node();
+
+  newstart->data=temp1->data;
+
+  newstart->next=NULL;
+
+  
+
+  temp->next=temp1->next;
+
+  temp1=temp->next;
+
+  
+
+  while(i<=n){
+
+     if((i%2)==0){
+
+        insert(&newstart,temp1->data);
+
+        temp->next=temp1->next;
+
+      temp1=temp->next;  
+
+        i++;
+
+       }
+
+     else{
+
+        i++;
+
+        temp=temp1;
+
+        temp1=temp->next;
+
+     }
+
+  }
+
+
+
+  while(temp->next!=NULL)
+
+     temp=temp->next;
+
+     
+
+   while(newstart->next!=NULL){
+
+     temp->next=newstart;
+
+     newstart=newstart->next;
+
+     temp=temp->next;
+
+  }
+
+  temp->next=newstart;
+
+  return *s;
+
+}
+
+
+
+int main(int argc, char** argv) {
+
+
+
+  int n,item;char ch;
+
+  ch='no';
+
+  cout<<"enter length of linked list - \n";
+
+  cin>>n;
+
+  
+
+  node* start=new node();
+
+  node* loc=new node();
+
+  cout<<"enter items in LL -\n";
+
+  cin>>item;
+
+  start->data=item;
+
+  start->next=NULL;
+
+
+
+  for(int i=0;i<n-1;i++){
+
+     cin>>item;
+
+     insert(&start,item);
+
+
+
+  }
+
+
+
+  cout<<"after insertion LL is -";
+
+  show(start);
+
+  cout<<"\n";
+
+  cout<<"after updatation LL is -";
+
+  start=update(&start,n);
+
+  show(start);
+
+
+
+  return 0;
+
+
+
+}
